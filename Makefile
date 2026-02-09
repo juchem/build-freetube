@@ -3,30 +3,45 @@
 all: build
 
 image:
-	docker build \
+	podman build \
 		-t build-freetube \
-			docker
+		-f Containerfile \
+			container
 
 image-from-scratch:
-	docker build \
-		-t build-freetube \
+	podman build \
 		--no-cache \
-			docker
+		-t build-freetube \
+		-f Containerfile \
+			container
 
 build: image
-	docker run \
+	mkdir -p /tmp/build-freetube/out
+	podman run \
 		-it --rm \
 		-v "/tmp/build-freetube/out:/out" \
 			build-freetube
+	echo "install with \`dpkg -i /tmp/build-freetube/out/*.deb\`"
 
 build-from-scratch: image-from-scratch
-	docker run \
+	mkdir -p /tmp/build-freetube/out
+	podman run \
 		-it --rm \
 		-v "/tmp/build-freetube/out:/out" \
 			build-freetube
+	echo "install with \`dpkg -i /tmp/build-freetube/out/*.deb\`"
+
+install: build
+	sudo dpkg -i /tmp/build-freetube/out/*.deb \
+		&& rm -rf /tmp/build-freetube
+
+install-from-scratch: build-from-scratch
+	sudo dpkg -i /tmp/build-freetube/out/*.deb \
+		&& rm -rf /tmp/build-freetube
 
 interactive: image
-	docker run \
+	mkdir -p /tmp/build-freetube/out
+	podman run \
 		-it --rm \
 		-v "/tmp/build-freetube/out:/out" \
 		--entrypoint bash \
