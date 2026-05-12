@@ -9,6 +9,10 @@ build_freetube() {
   git clean -xfd
   git submodule update --init --recursive --depth=1
 
+  sed -i \
+    -e "s|Platform.LINUX.createTarget(\[[^]]*\]|Platform.LINUX.createTarget(['deb']|g" \
+    "${FREETUBE_SRC}/_scripts/build.mjs"
+
   # https://github.com/FreeTubeApp/FreeTube/blob/development/.github/workflows/build.yml
   mkdir -p "${FREETUBE_SRC}/build"
   pushd "${FREETUBE_SRC}/build" > /dev/null
