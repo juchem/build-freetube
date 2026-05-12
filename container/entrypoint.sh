@@ -3,7 +3,7 @@
 build_freetube() {
   pushd "${FREETUBE_SRC}" > /dev/null
 
-  build_version="${FREETUBE_VERSION:-HEAD}"
+  build_version="${FREETUBE_VERSION:-master}"
   git fetch --depth=1 origin "${build_version}"
   git checkout -b "build-${build_version}-$(date +%s)" FETCH_HEAD
   git clean -xfd
