@@ -6,6 +6,10 @@ BUILD_MODE ?= squash-all
 PULL_POLICY ?= newer
 NO_CACHE=false
 
+# squash-all, squash, layers
+BUILD_MODE ?= squash-all
+PULL_POLICY ?= newer
+
 all: build
 
 .PHONY: image
