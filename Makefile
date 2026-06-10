@@ -1,16 +1,23 @@
-CONTAINER_RUNTIME="/usr/bin/crun"
+IMAGE_NAME=build-freetube
+IMAGE_TAG=latest
 
 # squash-all, squash, layers
-BUILD_MODE ?= squash-all
+BUILD_MODE ?= squash
 # newer, missing, always, never
 PULL_POLICY ?= newer
 NO_CACHE=false
 
-# squash-all, squash, layers
-BUILD_MODE ?= squash-all
-PULL_POLICY ?= newer
+BUILD_DIR ?= /tmp/$(IMAGE_NAME)
+SRC_DIR=container
+
+CONTAINER_RUNTIME="/usr/bin/crun"
 
 all: build
+
+.PHONY: clean
+clean:
+	rm -rf "$(BUILD_DIR)/"
+	"$(IMAGE_NAME):$(IMAGE_TAG)"
 
 .PHONY: image
 image:
@@ -19,32 +26,33 @@ image:
 		--$(BUILD_MODE) \
 		--pull="$(PULL_POLICY)" \
 		--no-cache="$(NO_CACHE)" \
-		-t build-freetube \
+		--tag "$(IMAGE_NAME):$(IMAGE_TAG)" \
 		-f Containerfile \
-			container
+			"$(SRC_DIR)"
 
 .PHONY: build
 build: image
-	mkdir -p /tmp/build-freetube/out
+	mkdir -p "$(BUILD_DIR)"
 	podman run \
 		-it --rm \
-		-v "/tmp/build-freetube/out:/out" \
-			build-freetube
-	echo "install with \`dpkg -i /tmp/build-freetube/out/*.deb\`"
+		-v "$(BUILD_DIR):/out" \
+			"$(IMAGE_NAME):$(IMAGE_TAG)"
+	echo "install with \`dpkg -i \"${BUILD_DIR}\"/*.deb\`"
 
 .PHONY: install
 install: build
-	sudo dpkg -i /tmp/build-freetube/out/*.deb \
+	sudo dpkg -i "${BUILD_DIR}"/*.deb \
 		&& rm -rf /tmp/build-freetube
+	$(MAKE) clean
 
 .PHONY: interactive
 interactive: image
-	mkdir -p /tmp/build-freetube/out
+	mkdir -p "$(BUILD_DIR)"
 	podman run \
 		-it --rm \
-		-v "/tmp/build-freetube/out:/out" \
+		-v "$(BUILD_DIR):/out" \
 		--entrypoint bash \
-			build-freetube
+			"$(IMAGE_NAME):$(IMAGE_TAG)"
 
 .PHONY: help
 help:
