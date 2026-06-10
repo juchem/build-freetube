@@ -23,7 +23,8 @@ RUN apt-get install -y --no-install-recommends \
 
 # freetube repo: https://github.com/FreeTubeApp/FreeTube.git
 
-ENV FREETUBE_SRC="/src/freetube"
+ARG FREETUBE_SRC="/src/freetube"
+ENV FREETUBE_SRC="${FREETUBE_SRC}"
 
 RUN mkdir -p "${FREETUBE_SRC}"
 RUN cd "${FREETUBE_SRC}" \
