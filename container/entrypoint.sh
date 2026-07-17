@@ -17,8 +17,8 @@ build_freetube() {
   mkdir -p "${FREETUBE_SRC}/build"
   pushd "${FREETUBE_SRC}/build" > /dev/null
   (set -x; \
-    time yarnpkg install \
-    && time yarnpkg run build
+    time pnpm install \
+    && time pnpm run build
   )
   mv /src/freetube/build/freetube_*.deb /out
   popd > /dev/null

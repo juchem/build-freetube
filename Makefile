@@ -17,7 +17,7 @@ all: build
 .PHONY: clean
 clean:
 	rm -rf "$(BUILD_DIR)/"
-	"$(IMAGE_NAME):$(IMAGE_TAG)"
+	podman rmi "$(IMAGE_NAME):$(IMAGE_TAG)"
 
 .PHONY: image
 image:
